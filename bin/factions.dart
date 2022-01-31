@@ -2,13 +2,17 @@ import 'dart:io';
 import 'dart:collection';
 
 void main(List<String> arguments) {
-  final String contents = File(
-          '/Users/hariyanuar/Developer/Dart/Generasi Gigih/factions/bin/input.in')
-      .readAsStringSync();
+  final String contents =
+      File('D:/ProdActive/Dart/Generasi Gigih/factions/factions/bin/input.in')
+          .readAsStringSync();
+  final File output = File(
+      'D:/ProdActive/Dart/Generasi Gigih/factions/factions/bin/output.out');
   final rawInputs = contents.split('\n');
   final int testCasesLength = int.parse(rawInputs[0]);
-
   int inputsIndex = 1;
+
+  output.writeAsString('');
+
   for (int i = 0; i < testCasesLength; i++) {
     final List<dynamic> input;
 
@@ -44,32 +48,28 @@ void main(List<String> arguments) {
       //stdout.writeln('SCANNING X: $x Y: $y');
 
       if (y < 0 || y >= verticalLength) {
-        // make sure not not exceed the limit
         return;
       }
       if (x < 0 || x >= horizontalLength) {
-        // make sure not not exceed the limit
         return;
       }
       if (visited[y][x]) {
-        // ignore it when already visited
         return;
       }
-      visited[y][x] = true; // set true when the maps is already visited
+      visited[y][x] = true;
       if (map[y][x] == "#") {
         // ignore #
         return;
       }
       if (!(map[y][x] == ".")) {
-        // add fraction to the Set tempFraction
-        stdout.writeln('FOUND ARMY FACTION ${map[y][x]} on X: $x and Y: $y');
+        // stdout.writeln('FOUND ARMY FACTION ${map[y][x]} on X: $x and Y: $y');
         factions.add(map[y][x]);
       }
 
-      findAndContest(y, x + 1); // move direction right
-      findAndContest(y, x - 1); // move direction left
-      findAndContest(y + 1, x); // move direction up
-      findAndContest(y - 1, x); // move direction down
+      findAndContest(x, y + 1); // move direction right
+      findAndContest(x, y - 1); // move direction left
+      findAndContest(x + 1, y); // move direction up
+      findAndContest(x - 1, y); // move direction down
       return;
     }
 
@@ -80,8 +80,8 @@ void main(List<String> arguments) {
         // stdout.writeln('START SCANNING AT X: $x AND Y: $y');
         factions.clear();
         findAndContest(x, y);
-        if (factions.length > 0)
-          stdout.writeln('FOUND ARMIES : ${factions.join(',')}');
+        // if (factions.length > 0)
+        //   stdout.writeln('FOUND ARMIES : ${factions.join(',')} FROM X: $x Y: $y');
         if (factions.length > 1) {
           // stdout.writeln('CONTEST FOUND WITH FACTIONS ${factions.join(', ')}');
           contest++;
@@ -98,8 +98,15 @@ void main(List<String> arguments) {
       }
     }
 
-    stdout.writeln('Case $i:');
+    stdout.writeln('Case ${i + 1}:');
+    output.writeAsStringSync('Case ${i + 1}:\n', mode: FileMode.append);
+    armies.forEach((key, value) {
+      stdout.writeln('$key $value');
+      output.writeAsStringSync('$key $value\n', mode: FileMode.append);
+    });
     stdout.writeln('contested $contest');
-    armies.forEach((key, value) => stdout.writeln('$key $value'));
+    output.writeAsStringSync(
+        'contested $contest${i == testCasesLength - 1 ? '' : '\n'}',
+        mode: FileMode.append);
   }
 }
